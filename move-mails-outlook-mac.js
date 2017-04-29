@@ -37,25 +37,28 @@ function archiveFolder(srcFolder, destFolder) {
     });
 }
 function getDestAccount(email) {
-    var destAccount = outlook.exchangeAccounts().find(function (elem) {
+    return outlook.exchangeAccounts().find(function (elem) {
         return elem.emailAddress() == email;
     });
-    if (!destAccount) throw "Cannot found dest account: " + email;
-    return destAccount;
 }
 function getDestFolder(destAccount, folderName) {
-    var destFolder = destAccount.mailFolders().find(function (elem) {
+    return destAccount.mailFolders().find(function (elem) {
         return elem.name() == folderName;
     });
-    if (!destFolder) throw "Cannot found dest folder: " + folderName;
-    return destFolder;
+}
+function checkNull(obj, errorDesc) {
+    if (!obj) {
+        throw errorDesc;
+    }
 }
 function run(argv) {
     if (argv.length < 2) {
         return "usage: move-mails-outlook-mac.js <email> <folder>";
     }
     var destAccount = getDestAccount(argv[0]);
+    checkNull(destAccount, "Cannot found dest account: " + argv[0]);
     var destFolder = getDestFolder(destAccount, argv[1]);
+    checkNull(destFolder, "Cannot found dest folder: " + argv[1]);
 
     var srcAccount = outlook.defaultAccount();
     var srcFolder = srcAccount.inbox();
