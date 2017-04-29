@@ -1,7 +1,5 @@
 #!/usr/bin/env osascript -l JavaScript
 
-// Move messages from default account to archive account
-
 "use strict";
 var outlook = Application("Microsoft Outlook");
 
@@ -18,7 +16,6 @@ function findSubFolderByName(folder, name) {
 function msgCntInFolderForArchiving(folder) {
     return folder.messages().length - folder.unreadCount();
 }
-
 function moveMsgs(srcFolder, destFolder) {
     srcFolder.messages().forEach(function (msg) {
         if (msg.isRead()) {
@@ -27,14 +24,12 @@ function moveMsgs(srcFolder, destFolder) {
     });
 }
 function archiveFolder(srcFolder, destFolder) {
-    // Archiving self 
     var msgCnt = msgCntInFolderForArchiving(srcFolder);
     var parentName = getParentFolderName(srcFolder);
     console.log("Archiving: %s/%s (%d)", parentName, srcFolder.name(), msgCnt);
 
     moveMsgs(srcFolder, destFolder);
 
-    // Archiving sub folders
     var srcSubFolders = new Array();
     srcFolder.mailFolders().forEach(function (srcSubFolder) {
         var msgCnt = msgCntInFolderForArchiving(srcSubFolder);
@@ -62,8 +57,6 @@ function getDestFolder(destAccount, folderName) {
     if (!destFolder) throw "Cannot found dest folder: " + folderName;
     return destFolder;
 }
-
-// Entry point
 function run(argv) {
     if (argv.length < 2) {
         return "usage: move-mails-outlook-mac.js <email> <folder>";
@@ -71,12 +64,10 @@ function run(argv) {
     var destAccount = getDestAccount(argv[0]);
     var destFolder = getDestFolder(destAccount, argv[1]);
 
-    // Asume default account is the source account
     var srcAccount = outlook.defaultAccount();
     var srcFolder = srcAccount.inbox();
 
     console.log("Archiving messages from " + srcAccount.name() + "/Inbox to " + destAccount.name() + "/" + destFolder.name());
-    //archiveFolder(srcFolder, destFolder);
     archiveFolder(srcFolder, destFolder);
 }
 
