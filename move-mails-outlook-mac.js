@@ -2,17 +2,14 @@
 
 "use strict";
 var outlook = Application("Microsoft Outlook");
-
 function getParentFolderName(folder) {
     return folder.container().name() != null ? "/" + folder.container().name() : "";
 }
-
 function findSubFolderByName(folder, name) {
     return folder.mailFolders().find(function (subFolder) {
         return subFolder.name() == name;
     });
 }
-
 function msgCntInFolderForArchiving(folder) {
     return folder.messages().length - folder.unreadCount();
 }
@@ -27,9 +24,7 @@ function archiveFolder(srcFolder, destFolder) {
     var msgCnt = msgCntInFolderForArchiving(srcFolder);
     var parentName = getParentFolderName(srcFolder);
     console.log("Archiving: %s/%s (%d)", parentName, srcFolder.name(), msgCnt);
-
     moveMsgs(srcFolder, destFolder);
-
     var srcSubFolders = new Array();
     srcFolder.mailFolders().forEach(function (srcSubFolder) {
         var msgCnt = msgCntInFolderForArchiving(srcSubFolder);
@@ -41,7 +36,6 @@ function archiveFolder(srcFolder, destFolder) {
         }
     });
 }
-
 function getDestAccount(email) {
     var destAccount = outlook.exchangeAccounts().find(function (elem) {
         return elem.emailAddress() == email;
@@ -49,7 +43,6 @@ function getDestAccount(email) {
     if (!destAccount) throw "Cannot found dest account: " + email;
     return destAccount;
 }
-
 function getDestFolder(destAccount, folderName) {
     var destFolder = destAccount.mailFolders().find(function (elem) {
         return elem.name() == folderName;
