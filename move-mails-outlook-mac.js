@@ -2,6 +2,23 @@
 
 "use strict";
 var outlook = Application("Microsoft Outlook");
+outlook.strictPropertyScope = true;
+outlook.strictCommandScope = true;
+function run(argv) {
+    if (argv.length < 2) {
+        return "usage: move-mails-outlook-mac.js <email> <folder>";
+    }
+    var destAccount = getDestAccount(argv[0]);
+    checkNull(destAccount, "Cannot found dest account: " + argv[0]);
+    var destFolder = getDestFolder(destAccount, argv[1]);
+    checkNull(destFolder, "Cannot found dest folder: " + argv[1]);
+
+    var srcAccount = outlook.defaultAccount();
+    var srcFolder = srcAccount.inbox();
+
+    console.log("Archiving messages from " + srcAccount.name() + "/Inbox to " + destAccount.name() + "/" + destFolder.name());
+    archiveFolder(srcFolder, destFolder);
+}
 function getParentFolderName(folder) {
     return folder.container().name() != null ? "/" + folder.container().name() : "";
 }
@@ -51,21 +68,7 @@ function checkNull(obj, errorDesc) {
         throw errorDesc;
     }
 }
-function run(argv) {
-    if (argv.length < 2) {
-        return "usage: move-mails-outlook-mac.js <email> <folder>";
-    }
-    var destAccount = getDestAccount(argv[0]);
-    checkNull(destAccount, "Cannot found dest account: " + argv[0]);
-    var destFolder = getDestFolder(destAccount, argv[1]);
-    checkNull(destFolder, "Cannot found dest folder: " + argv[1]);
 
-    var srcAccount = outlook.defaultAccount();
-    var srcFolder = srcAccount.inbox();
-
-    console.log("Archiving messages from " + srcAccount.name() + "/Inbox to " + destAccount.name() + "/" + destFolder.name());
-    archiveFolder(srcFolder, destFolder);
-}
 
 
 
