@@ -27,11 +27,11 @@ function archiveFolder(srcFolder, destFolder) {
     moveMsgs(srcFolder, destFolder);
     var srcSubFolders = new Array();
     srcFolder.mailFolders().forEach(function (srcSubFolder) {
-        var msgCnt = msgCntInFolderForArchiving(srcSubFolder);
         var destSubFolder = findSubFolderByName(destFolder, srcSubFolder.name());
         if (destSubFolder != null) {
             archiveFolder(srcSubFolder, destSubFolder);
         } else {
+            var msgCnt = msgCntInFolderForArchiving(srcSubFolder);
             console.log("Skipping : /%s/%s (%d)", srcFolder.name(), srcSubFolder.name(), msgCnt);
         }
     });
