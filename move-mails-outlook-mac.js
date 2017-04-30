@@ -2,8 +2,6 @@
 
 "use strict";
 var outlook = Application("Microsoft Outlook");
-outlook.strictPropertyScope = true;
-outlook.strictCommandScope = true;
 function run(argv) {
     if (argv.length < 2) {
         return "usage: move-mails-outlook-mac.js <email> <folder>";
