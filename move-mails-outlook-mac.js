@@ -2,6 +2,10 @@
 
 "use strict";
 var outlook = Application("Microsoft Outlook");
+outlook.strictPropertyScope = true;
+outlook.strictCommandScope = true;
+
+// Entry point
 function run(argv) {
     if (argv.length < 2) {
         return "usage: move-mails-outlook-mac.js <email> <folder>";
@@ -20,10 +24,21 @@ function run(argv) {
 function getParentFolderName(folder) {
     return folder.container().name() != null ? "/" + folder.container().name() : "";
 }
-function findSubFolderByName(folder, name) {
+function getSubFolderByName(folder, name) {
     return folder.mailFolders().find(function (subFolder) {
         return subFolder.name() == name;
     });
+}
+function makeMailFolder(parentFolder, folderName) {
+    console.log(parentFolder.name());
+    console.log(folderName)
+    return outlook.make({
+        new: parentFolder.class(), at: parentFolder, withProperties: { name: folderName }
+    });
+}
+function getSubFolderByName(folder, name) {
+    var subFolder = getSubFolderByName(folder, name);
+    return subFolder != null ? subFolder : makeMailFolder(folder, name);
 }
 function msgCntInFolderForArchiving(folder) {
     return folder.messages().length - folder.unreadCount();
@@ -31,7 +46,8 @@ function msgCntInFolderForArchiving(folder) {
 function moveMsgs(srcFolder, destFolder) {
     srcFolder.messages().forEach(function (msg) {
         if (msg.isRead()) {
-            outlook.move(msg, { to: destFolder });
+            console.log(msg.subject());
+            //outlook.move(msg, { to: destFolder });
         }
     });
 }
@@ -42,13 +58,8 @@ function archiveFolder(srcFolder, destFolder) {
     moveMsgs(srcFolder, destFolder);
     var srcSubFolders = new Array();
     srcFolder.mailFolders().forEach(function (srcSubFolder) {
-        var destSubFolder = findSubFolderByName(destFolder, srcSubFolder.name());
-        if (destSubFolder != null) {
-            archiveFolder(srcSubFolder, destSubFolder);
-        } else {
-            var msgCnt = msgCntInFolderForArchiving(srcSubFolder);
-            console.log("Skipping : /%s/%s (%d)", srcFolder.name(), srcSubFolder.name(), msgCnt);
-        }
+        var destSubFolder = getSubFolderByName(destFolder, srcSubFolder.name());
+        archiveFolder(srcSubFolder, destSubFolder);
     });
 }
 function getDestAccount(email) {
