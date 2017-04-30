@@ -2,7 +2,7 @@
 
 "use strict";
 var outlook = Application("Microsoft Outlook");
-var AUTO_CREATE_FOLDER = true;
+
 // Entry point
 function run(argv) {
     if (argv.length < 2) {
