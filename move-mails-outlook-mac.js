@@ -82,7 +82,12 @@ function doArchiving(srcFolder, destFolder) {
 }
 
 function getDestAccount(email) {
-    return Outlook.getInstance().exchangeAccounts().find(function (elem) {
+    var destAccount = findAccount(Outlook.getInstance().exchangeAccounts(), email)
+    return destAccount != null ? destAccount :  findAccount(Outlook.getInstance().imapAccounts(), email);
+}
+
+function findAccount(accounts, email) {
+    return accounts.find(function (elem) {
         return elem.emailAddress() == email;
     });
 }
