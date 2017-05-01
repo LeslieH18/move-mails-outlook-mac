@@ -1,5 +1,13 @@
 #!/usr/bin/env osascript -l JavaScript
 
+/*
+ * move-mails-outlook-mac.js
+ * Copyright (C) 2017 Reggie Zhang <reggy.zhang@gmail.com>
+ * Licensed under the terms of The GNU Lesser General Public License (LGPLv3):
+ * http://www.opensource.org/licenses/lgpl-3.0.html
+ * 
+ */
+
 "use strict";
 
 var Outlook = (function () {
